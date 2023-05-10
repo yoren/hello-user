@@ -59,7 +59,15 @@ no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
 ### Step 3
-Let's start our Git journey by adding the files to the staging area.
+If you're interested in what changes are made to the `.gitignore` file, you can run the following command:
+```shell
+git diff .gitignore
+```
+Since `.gitignore` is the only file that has changes, you can use the following command to see the changes:
+```shell
+git diff
+```
+Now, let's add all the changes to the staging area.
 ```shell
 git add .
 ```
