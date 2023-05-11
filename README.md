@@ -103,6 +103,12 @@ It tells Git to normalize line endings for all text files. This is important bec
 ### Step 4
 The plugin hasn't really been doing what we want, which is to greet the user. So let's update the plugin to do that.
 
+Before we write some code, run:
+```shell
+npm run start
+```
+So your changes will be compiled automatically.
+
 Open the `src/edit.js` and `src/save.js` and insert the current user's name to the greeting message. You can get the current user's name by calling `wp.data.select('core').getCurrentUser().name`.
 
 ```js
@@ -128,6 +134,13 @@ export default function save() {
 ```
 
 If you're familiar with Gutenberg blocks, you should already know that this is the **ABSOLUTELY WRONG** way to do it. But we are doing it so we can learn more Git concepts along the way!
+
+Let's still commit these changes and discuss how to fix this in our next exercise:
+```shell
+git add .
+git commit -m "Display the username in our block"
+git push
+```
 
 ## Continue the Git journey in exercise 3
 Check out the `exercise-3` branch to continue the Git journey:
