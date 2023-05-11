@@ -1,6 +1,20 @@
 # hello-user
 A Demo repo for the Git Workshop at Codeable
 
+## Pre-requisites
+- Git is required to be installed before this workshop. You can download it from https://git-scm.com/downloads and install it on your machine. If you're using a Mac like me, Git should be already installed on your machine.
+- Other tools that are recommended to be installed for a smoother experience during the workshop:
+    - Your favorite terminal app and text editor.
+    - [nvm](https://github.com/nvm-sh/nvm): to manage Node and npm versions.
+    - [@wordpress/create-block](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-create-block/): it will be installed during the workshop when we create the block plugin.
+    - [Composer](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-macos): to manage PHP dependencies.
+    - Github account: if you’d like to participate the collaboration session in the workshop, you need a GitHub account to submit Pull Request. Also, it is recommended to have a GitHub account so you can fork this repo and follow along the workshop.
+- Tools will be using for demo purposes in the workshop but not required for attendees:
+    - [oh-my-zsh](https://ohmyz.sh/): a framework for managing your zsh configuration.
+    - [Fig](http://fig.io): a tool to make your terminal more interactive.
+    - [Sourcetree](https://www.sourcetreeapp.com/): a GUI for Git.
+    - [Fork](https://fork.dev/): a GUI for Git.
+
 ## Exercise 1
 When you create a repo on https://github.com/new, it can create three files for you (which was how I got the base of this repo):
 1. README.md
