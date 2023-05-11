@@ -18,7 +18,7 @@ import { useBlockProps } from '@wordpress/block-editor';
 export default function save() {
 	return (
 		<p { ...useBlockProps.save() }>
-			{ 'Hello User – hello from the saved content!' }
+			{ `Hello ${wp.data.select("core").getCurrentUser().name}!` }
 		</p>
 	);
 }

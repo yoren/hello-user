@@ -32,7 +32,7 @@ import './editor.scss';
 export default function Edit() {
 	return (
 		<p { ...useBlockProps() }>
-			{ __( 'Hello User – hello from the editor!', 'hello-user' ) }
+			{ __( 'Hello', 'hello-user' ) + ` ${wp.data.select("core").getCurrentUser().name}!` }
 		</p>
 	);
 }
