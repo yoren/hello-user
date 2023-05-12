@@ -26,6 +26,8 @@ Now, let's use `@wordpress/create-block` to spin up the block plugin skeleton fo
 ### Step 0
 Fork this repo to your own GitHub account. You can do it by clicking the "Fork" button on the top right corner of this page.
 
+Also, please select "Copy the main branch only" which is selected by default. This will be helpful when we're covering branching concepts.
+
 ### Step 1
 If you've done Step 0, clone that repo to your local machine. If not, you can clone this repo (`git@github.com:yoren/hello-user.git`) to your local machine.
 
