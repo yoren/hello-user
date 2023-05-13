@@ -2,9 +2,7 @@
 A Demo repo for the Git Workshop at Codeable
 
 ## Exercise 4
-To help us to understand the difference between `rebase` and `merge` let's merge/rebase two branches that we know there are conflicts.
-
-Also, please select "Copy the main branch only" which is selected by default. This will be helpful when we're covering branching concepts.
+To help us to understand the difference between `rebase` and `merge`, let's merge/rebase two branches that we know there are conflicts.
 
 ### Step 1
 Checkout the `main` branch and merge the `excercise-3` branch to it.
@@ -100,7 +98,7 @@ The output will be:
 * 6312c36 Add the instruction to force node version
 ...
 ```
-And the second obvious difference that you'll notice is that the commit tree is of the `main` branch is being **rewritten**, commits from the `excercise-3` branch are now part of the `main` branch, when comparing to use the `merge` command, there's only a new commit being created.
+And the second obvious difference that you'll notice is that the commit tree of the `main` branch is being **rewritten**, commits from the `excercise-3` branch are now part of the `main` branch, when comparing to use the `merge` command, there's only a new commit being created.
 
 ### Step 3
 Because the commit tree has been changed drastically, we cannot use `HEAD~N` to count it back to the previous state. Luckily we can specify the commit hash to reset to.
@@ -109,6 +107,23 @@ Because the commit tree has been changed drastically, we cannot use `HEAD~N` to 
 git reset --hard 86893b8
 ```
 There is also a pretty handy command `git reflog` that can help us see ALL the action history we've done on this repo. Unlike `git log` is purely for commit history, `git reflog` covers EVERYTHING, including `reset`, `rebase`, `merge`, `checkout`, etc.
+
+```bash
+git reflog
+```
+The output will be:
+```
+86893b8 (HEAD -> main, origin/main, origin/HEAD) HEAD@{0}: checkout: moving from excercise-4 to main
+d1c9619 (origin/excercise-4, excercise-4) HEAD@{1}: reset: moving to HEAD
+d1c9619 (origin/excercise-4, excercise-4) HEAD@{2}: checkout: moving from excercise-3 to excercise-4
+d014cf3 (origin/excercise-3, excercise-3) HEAD@{3}: rebase (abort): updating HEAD
+e041faf HEAD@{4}: rebase (start): checkout e041faf
+d014cf3 (origin/excercise-3, excercise-3) HEAD@{5}: rebase (finish): returning to refs/heads/excercise-3
+d014cf3 (origin/excercise-3, excercise-3) HEAD@{6}: rebase (start): checkout refs/remotes/origin/excercise-3
+d014cf3 (origin/excercise-3, excercise-3) HEAD@{7}: checkout: moving from excercise-4 to excercise-3
+...
+```
+Which you can see that it shows the whole action history across all branches.
 
 ### Step 4
 There is one more command for us to learn regarding changing the commit tree, which is `cherry-pick`. It's a command that allows us to pick a commit from another branch and apply it to the current branch.
