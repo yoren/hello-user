@@ -1,132 +1,127 @@
 # hello-user
 A Demo repo for the Git Workshop at Codeable
 
-## Exercise 3
-We just realized the plugin is not working as expected. We need to fix it. While there is a right way to do it with pure JavaScript, as a PHP developer, I can't help but think a dynamic block can make things much easier for me.
+## Exercise 4
+To help us to understand the difference between `rebase` and `merge` let's merge/rebase two branches that we know there are conflicts.
+
+Also, please select "Copy the main branch only" which is selected by default. This will be helpful when we're covering branching concepts.
 
 ### Step 1
-Since we're going to change it from a static block to a dynamic block, it will be a kinda major change so let's do it in a new branch. Here I wanted to introduce a naming convention to group your branches. Common practices are like: `feature/` prefix for new features, `bugfix/` or `fix` for bug fixes, `enhancement/` for enhancements, `refactor/` for refactoring, `chore/` for chores, and `hotfix/` for hotfixes. So let's create a new branch called `feature/dynamic-block`.
+Checkout the `main` branch and merge the `excercise-3` branch to it.
 
 ```bash
-git checkout -b feature/dynamic-block
+git checkout main
+git merge excercise-3
 ```
 
-Once the new branch is created, we can go back to the `plugins` folder and use `@wordpress/create-block` to generate a dynamic block for us:
+You will see output like:
+```
+Auto-merging README.md
+CONFLICT (content): Merge conflict in README.md
+Automatic merge failed; fix conflicts and then commit the result.
+```
+So we're sure that there are conflicts between the two branches. Now let's abort the merge and use a lazy shortcut (assuming we're sure that we want to adopt everything in the `excercise-3` branch).
 
 ```bash
-cd ..
-npx @wordpress/create-block hello-user --variant dynamic
-cd hello-user
+git merge --abort
+git merge --strategy-option theirs excercise-3
 ```
+We will firstly see the commit message editor pop up. We can just save and close it (press ESC key, then `:wq` and Enter).
+
+Once the merge is done, let's use `git log` to draw the commit graph:
+
+```bash
+git log --all --graph --decorate --oneline
+```
+Add here's the commit tree we will see:
+```
+*   4214c69 (HEAD -> main) Merge branch 'excercise-3'
+|\
+* | 86893b8 (origin/main, origin/HEAD) Update instructions
+* | 81af859 Add pre-requisites section
+| | * f175996 (refs/stash) WIP on excercise-4: d014cf3 Add instructions
+| |/|
+| | * 42bee87 index on excercise-4: d014cf3 Add instructions
+| |/
+| | * 28ce4ff (origin/feature/dynamic-block, feature/dynamic-block) Use wp_get_current_user() to get the current user's information
+| | * be23679 Create a dynamic block
+| |/
+| * d014cf3 (origin/excercise-3, excercise-4, excercise-3) Add instructions
+| * b23c58b Add gitattributes
+| * 475f997 Display current user name in the block
+| * ac06068 Ignore build and .idea folders
+| | * 187a9fc (origin/excercise-2, excercise-2) Update instructions
+| | * 5a7d4fb Update readme for exercise 2
+| |/
+| * f424579 Add block plugin skeleton
+|/
+* 6312c36 Add the instruction to force node version
+* 2d82d8d Add git diff to Step 3
+...
+```
+
+Make a mental note of what you see and reset the branch `git reset --hard HEAD~1` to get back to the previous state.
 
 ### Step 2
-Let's see what have been changed in this dynamic block with `git status`
-```
-On branch feature/dynamic-block
-Your branch is up to date with 'origin/feature/dynamic-block'.
+Now let's do the same thing but using `rebase` instead of `merge`.
 
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	modified:   .gitignore
-	modified:   package-lock.json
-	modified:   package.json
-	modified:   src/block.json
-	modified:   src/edit.js
-	modified:   src/index.js
-	modified:   src/save.js
+```bash
+git rebase --strategy-option theirs excercise-3
+```
+The first thing you'll notice is there's no commit message editor to pop up. It
+just told use the base is done successfully. Let's draw the commit tree again:
 
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	build/
-	src/render.php
-
-no changes added to commit (use "git add" and/or "git commit -a")
-```
-We noticed that some changes we previously made have been reverted, which we don't want, so we can just restore those files by:
 ```bash
-git restore .gitignore src/edit.js
+git log --all --graph --decorate --oneline
 ```
-Also, with a dynamic block, we don't need `src/save.js` anymore, so we can just remove it:
-```bash
-rm src/save.js
+The output will be:
 ```
-Now we can commit the changes:
-```bash
-git add .
-git commit -m "Create a dynamic block"
+* 246e132 (HEAD -> main) Update instructions
+* f8df6b3 Add pre-requisites section
+| * 35c1dc8 (refs/stash) WIP on excercise-4: d014cf3 Add instructions
+|/|
+| * c677f38 index on excercise-4: d014cf3 Add instructions
+|/
+| * 28ce4ff (origin/feature/dynamic-block, feature/dynamic-block) Use wp_get_current_user() to get the current user's information
+| * be23679 Create a dynamic block
+|/
+* d014cf3 (origin/excercise-3, excercise-4, excercise-3) Add instructions
+* b23c58b Add gitattributes
+* 475f997 Display current user name in the block
+* ac06068 Ignore build and .idea folders
+| * 86893b8 (origin/main, origin/HEAD) Update instructions
+| * 81af859 Add pre-requisites section
+| | * 187a9fc (origin/excercise-2, excercise-2) Update instructions
+| | * 5a7d4fb Update readme for exercise 2
+| |/
+|/|
+* | f424579 Add block plugin skeleton
+|/
+* 6312c36 Add the instruction to force node version
+...
 ```
+And the second obvious difference that you'll notice is that the commit tree is of the `main` branch is being **rewritten**, commits from the `excercise-3` branch are now part of the `main` branch, when comparing to use the `merge` command, there's only a new commit being created.
 
 ### Step 3
-Since we have a PHP file to render the content on the frontend, we can easily use our favorite `wp_get_current_user()` function to get the current user's information.
+Because the commit tree has been changed drastically, we cannot use `HEAD~N` to count it back to the previous state. Luckily we can specify the commit hash to reset to.
 
 ```bash
-npm run start
+git reset --hard 86893b8
 ```
-And let's update `src/render.php` to:
-```php
-<p <?php echo get_block_wrapper_attributes(); ?>>
-	<?php echo sprintf( esc_html__( 'Hello %s!', 'hello-user' ), wp_get_current_user()->display_name ); ?>
-</p>
-```
-And remember to commit this change too:
-```bash
-git add .
-git commit -m "Use wp_get_current_user() to get the current user's information"
-```
+There is also a pretty handy command `git reflog` that can help us see ALL the action history we've done on this repo. Unlike `git log` is purely for commit history, `git reflog` covers EVERYTHING, including `reset`, `rebase`, `merge`, `checkout`, etc.
 
 ### Step 4
-We're very happy to confirm the block is working as expected. So let's merge the `feature/dynamic-block` branch into the `exercise-3` branch:
-```bash
-git checkout exercise-3
-git merge feature/dynamic-block
-```
-You should be seeing output like this:
-```
-Updating b23c58b..29ae984
-Fast-forward
- package-lock.json | 2351 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------------
- package.json      |    6 +-
- src/block.json    |    3 +-
- src/index.js      |    6 -
- src/render.php    |    3 +
- src/save.js       |   24 -
- 6 files changed, 1811 insertions(+), 582 deletions(-)
- create mode 100644 src/render.php
- delete mode 100644 src/save.js
-```
-However, if you change your mind, say, we actually don't want to merge it to `exercise-3`, we can revert the changes completely by:
-```bash
-git checkout exercise-3
-git reset --hard HEAD~2
-```
-Note `HEAD~2` means the last 2 commits. If you want to revert the last commit only, you can use `HEAD~1` or `HEAD^`.
+There is one more command for us to learn regarding changing the commit tree, which is `cherry-pick`. It's a command that allows us to pick a commit from another branch and apply it to the current branch.
 
-### Step 5
-Say if we change our mind (again!) and this time we feel like to merge it to `excercise-3` but we don't like to have two commits being displayed in the history, we prefer to just display a single commit with the changes we made in `feature/dynamic-block` branch. We can use `git merge --squash` to achieve that:
 ```bash
-git checkout exercise-3
-git merge --squash feature/dynamic-block
-git commit -m "Create a dynamic block"
+git cherry-pick ac06068 --startegy-option theirs
 ```
+The syntax is pretty straightforward, we just need to specify the commit hash that we want to pick. And we can also use that lazy shortcut if we're sure that we want to adopt everything in the commit.
 
-### Step 6
-Lastly, you may be wondering now that, what is `git rebase` then? Let's figure it out by doing a rebase!
-We will start by doing a reset, and note that this time we use `HEAD~1`, because with the `squash` we just did, there will only be one new commit added in the `exercise-3` branch:
-```bash
-git reset --hard HEAD~1
-```
-And try `git rebase`:
-```bash
-git rebase feature/dynamic-block
-```
-You should be seeing output like this:
-```
-Successfully rebased and updated refs/heads/excercise-3.
-```
-And - it looks exactly like what we did with `git merge`, doesn't it? When git merge work with fast forward, it can be very confusing to tell the difference between `git merge` and `git rebase`. But when it comes to merge conflicts, `git rebase` will be a much better option. We will talk about merge conflicts in the next exercise.
+If we don't force a strategy there, it's likely we will have merge conflicts from the cherry-pick and we need to manually fix them, just like merge or rebase.
 
-## Continue the Git journey in exercise 4
-Check out the `exercise-4` branch to continue the Git journey:
+## Continue the Git journey in exercise 5
+Check out the `exercise-5` branch where we will start to talk about GitHub and its nice features that can help us to collaborate with other developers.
 ```shell
-git checkout excercise-4
+git checkout excercise-5
+```
