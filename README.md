@@ -27,7 +27,7 @@ You can edit some properties to suit your needs, here's an example of mine:
 	},
 	"repositories": [
 		{
-			"type": "vcs",
+			"type": "git",
 			"url": "https://github.com/WordPress/WordPress-Coding-Standards"
 		}
 	],
@@ -217,9 +217,10 @@ jobs:
                   composer --version
 
             - name: Install Composer dependencies
-              uses: ramsey/composer-install@v1
+              uses: ramsey/composer-install@v2
               with:
                   composer-options: "--no-progress --no-ansi --no-interaction"
+                  ignore-cache: "yes"
 
             - name: Make Composer packages available globally
               run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
@@ -236,6 +237,9 @@ jobs:
                   for changed_file in ${{ steps.files.outputs.added_modified }}; do
                     printf ${changed_file}"\n" >> $GITHUB_WORKSPACE/file-list
                   done
+
+            - name: Create the PHPCS cache folder
+              run: mkdir -p $GITHUB_WORKSPACE/.cache
 
             - name: Run PHPCS on all changed files
               continue-on-error: true
