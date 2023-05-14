@@ -83,6 +83,9 @@ jobs:
             printf ${changed_file}"\n" >> $GITHUB_WORKSPACE/file-list
           done
 
+      - name: Create the PHPCS cache folder
+        run: mkdir -p $GITHUB_WORKSPACE/.cache
+
       - name: Run PHPCS on all changed files
         continue-on-error: true
         run: |
