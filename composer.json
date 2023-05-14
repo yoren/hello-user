@@ -14,8 +14,8 @@
 	},
 	"repositories": [
 		{
-			"type": "vcs",
-			"url": "https://github.com/WordPress/WordPress-Coding-Standards.git"
+			"type": "git",
+			"url": "https://github.com/WordPress/WordPress-Coding-Standards"
 		}
 	],
 	"require-dev": {
