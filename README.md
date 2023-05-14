@@ -1,142 +1,254 @@
 # hello-user
 A Demo repo for the Git Workshop at Codeable
 
-## Exercise 4
-To help us to understand the difference between `rebase` and `merge`, let's merge/rebase two branches that we know there are conflicts.
+## Exercise 5
+When thinking about collaboration on GitHub, the first thing comes to our mind is the Pull Request. It's a way to propose changes to the codebase of a project. Once a PR is submitted, the project maintainers can review the changes and decide whether to merge the PR or not.
+
+In large open source project like WordPress, how do they ensure the bare minimum code quality is assured before even start reviewing a PR? Usually PHPCS and a CI tool to run PHPCS automatically on every PR is the answer.
 
 ### Step 1
-Checkout the `main` branch and merge the `excercise-3` branch to it.
+Let's add PHPCS to our hello-user plugin. First, we need to install the PHPCS and the WordPress Coding Standards. Let's get lazy again and copy the `composer.json` file from WordPress's develop repository. You can find it here: https://github.com/WordPress/wordpress-develop/blob/trunk/composer.json
 
-```bash
-git checkout main
-git merge excercise-3
+You can edit some properties to suit your needs, here's an example of mine:
+```json
+{
+	"name": "yoren/hello-user",
+	"license": "GPL-2.0-or-later",
+	"description": "A simple plugin to greet users when they log in.",
+	"homepage": "https://wordpress.org",
+	"keywords": [
+		"hello", "Gutenberg", "wordpress", "wp"
+	],
+	"support": {
+		"issues": "https://github.com/yoren/hello-user/issues"
+	},
+	"require": {
+		"php": ">=5.6"
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/WordPress/WordPress-Coding-Standards"
+		}
+	],
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+		"squizlabs/php_codesniffer": "^3.7.2",
+		"wp-coding-standards/wpcs": "dev-develop",
+		"phpcompatibility/phpcompatibility-wp": "~2.1.3",
+		"yoast/phpunit-polyfills": "^1.0.1"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"scripts": {
+		"format": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf --report=summary,source",
+		"lint": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --report=summary,source",
+		"lint:errors": "@lint -n"
+	}
+}
 ```
-
-You will see output like:
-```
-Auto-merging README.md
-CONFLICT (content): Merge conflict in README.md
-Automatic merge failed; fix conflicts and then commit the result.
-```
-So we're sure that there are conflicts between the two branches. Now let's abort the merge and use a lazy shortcut (assuming we're sure that we want to adopt everything in the `excercise-3` branch).
-
-```bash
-git merge --abort
-git merge --strategy-option theirs excercise-3
-```
-We will firstly see the commit message editor pop up. We can just save and close it (press ESC key, then `:wq` and Enter).
-
-Once the merge is done, let's use `git log` to draw the commit graph:
-
-```bash
-git log --all --graph --decorate --oneline
-```
-Add here's the commit tree we will see:
-```
-*   4214c69 (HEAD -> main) Merge branch 'excercise-3'
-|\
-* | 86893b8 (origin/main, origin/HEAD) Update instructions
-* | 81af859 Add pre-requisites section
-| | * f175996 (refs/stash) WIP on excercise-4: d014cf3 Add instructions
-| |/|
-| | * 42bee87 index on excercise-4: d014cf3 Add instructions
-| |/
-| | * 28ce4ff (origin/feature/dynamic-block, feature/dynamic-block) Use wp_get_current_user() to get the current user's information
-| | * be23679 Create a dynamic block
-| |/
-| * d014cf3 (origin/excercise-3, excercise-4, excercise-3) Add instructions
-| * b23c58b Add gitattributes
-| * 475f997 Display current user name in the block
-| * ac06068 Ignore build and .idea folders
-| | * 187a9fc (origin/excercise-2, excercise-2) Update instructions
-| | * 5a7d4fb Update readme for exercise 2
-| |/
-| * f424579 Add block plugin skeleton
-|/
-* 6312c36 Add the instruction to force node version
-* 2d82d8d Add git diff to Step 3
-...
-```
-
-Make a mental note of what you see and reset the branch `git reset --hard HEAD~1` to get back to the previous state.
 
 ### Step 2
-Now let's do the same thing but using `rebase` instead of `merge`.
+Now we need to install the dependencies.
+
+I've forced in `composer.json` to use the develop version of WPCS so it can properly support PHP 8.0. Before we install the dependencies, we want to use PHP 8.0 as our PHP version. You can switch PHP version easily if you have Homebrew installed:
 
 ```bash
-git rebase --strategy-option theirs excercise-3
+brew unlink php@7.4 && brew link php@8.0
 ```
-The first thing you'll notice is there's no commit message editor to pop up. It
-just told use the base is done successfully. Let's draw the commit tree again:
+No worries if you have only PHP 7.4 installed, I've tested and the develop branch work with both PHP 7.4 and 8.0.
 
-```bash
-git log --all --graph --decorate --oneline
-```
-The output will be:
-```
-* 246e132 (HEAD -> main) Update instructions
-* f8df6b3 Add pre-requisites section
-| * 35c1dc8 (refs/stash) WIP on excercise-4: d014cf3 Add instructions
-|/|
-| * c677f38 index on excercise-4: d014cf3 Add instructions
-|/
-| * 28ce4ff (origin/feature/dynamic-block, feature/dynamic-block) Use wp_get_current_user() to get the current user's information
-| * be23679 Create a dynamic block
-|/
-* d014cf3 (origin/excercise-3, excercise-4, excercise-3) Add instructions
-* b23c58b Add gitattributes
-* 475f997 Display current user name in the block
-* ac06068 Ignore build and .idea folders
-| * 86893b8 (origin/main, origin/HEAD) Update instructions
-| * 81af859 Add pre-requisites section
-| | * 187a9fc (origin/excercise-2, excercise-2) Update instructions
-| | * 5a7d4fb Update readme for exercise 2
-| |/
-|/|
-* | f424579 Add block plugin skeleton
-|/
-* 6312c36 Add the instruction to force node version
-...
-```
-And the second obvious difference that you'll notice is that the commit tree of the `main` branch is being **rewritten**, commits from the `excercise-3` branch are now part of the `main` branch, when comparing to use the `merge` command, there's only a new commit being created.
+Run `composer install` and wait for the magic to happen. You should see a `vendor` folder created in your project root.
+
+Before running PHPCS, we also need to add a configuration file. Let's copy the `phpcs.xml.dist` file from WordPress's develop repository. You can find it here: https://github.com/WordPress/wordpress-develop/blob/trunk/phpcs.xml.dist
+
+You can also copy a light weight version of the configuration file from here:
+
+And please also add a `.cache` folder where we will cache PHPCS results. You can do it by running `mkdir .cache`.
 
 ### Step 3
-Because the commit tree has been changed drastically, we cannot use `HEAD~N` to count it back to the previous state. Luckily we can specify the commit hash to reset to.
+Let's try running PHPCS on our plugin. Run `composer run lint .` and you should see something like this:
+```
+> @php ./vendor/squizlabs/php_codesniffer/bin/phpcs --report=summary,source '.'
+. 1 / 1 (100%)
 
-```bash
-git reset --hard 86893b8
-```
-There is also a pretty handy command `git reflog` that can help us see ALL the action history we've done on this repo. Unlike `git log` is purely for commit history, `git reflog` covers EVERYTHING, including `reset`, `rebase`, `merge`, `checkout`, etc.
 
-```bash
-git reflog
+Time: 117ms; Memory: 8MB
 ```
-The output will be:
+Which is very nice! It means our plugin is following the WordPress Coding Standards. It's not that surprise since it's a small plugin that has only two PHP files!
+
+Now try breaking the coding standards in a creative way and run PHPCS again. You should see something like this:
 ```
-86893b8 (HEAD -> main, origin/main, origin/HEAD) HEAD@{0}: checkout: moving from excercise-4 to main
-d1c9619 (origin/excercise-4, excercise-4) HEAD@{1}: reset: moving to HEAD
-d1c9619 (origin/excercise-4, excercise-4) HEAD@{2}: checkout: moving from excercise-3 to excercise-4
-d014cf3 (origin/excercise-3, excercise-3) HEAD@{3}: rebase (abort): updating HEAD
-e041faf HEAD@{4}: rebase (start): checkout e041faf
-d014cf3 (origin/excercise-3, excercise-3) HEAD@{5}: rebase (finish): returning to refs/heads/excercise-3
-d014cf3 (origin/excercise-3, excercise-3) HEAD@{6}: rebase (start): checkout refs/remotes/origin/excercise-3
-d014cf3 (origin/excercise-3, excercise-3) HEAD@{7}: checkout: moving from excercise-4 to excercise-3
-...
+> @php ./vendor/squizlabs/php_codesniffer/bin/phpcs --report=summary,source '.'
+E 1 / 1 (100%)
+
+
+
+PHP CODE SNIFFER REPORT SUMMARY
+----------------------------------------------------------------------
+FILE                                                  ERRORS  WARNINGS
+----------------------------------------------------------------------
+hello-user.php                                        1       0
+----------------------------------------------------------------------
+A TOTAL OF 1 ERROR AND 0 WARNINGS WERE FOUND IN 1 FILE
+----------------------------------------------------------------------
+PHPCBF CAN FIX 1 OF THESE SNIFF VIOLATIONS AUTOMATICALLY
+----------------------------------------------------------------------
+
+Time: 146ms; Memory: 8MB
+
+
+PHP CODE SNIFFER VIOLATION SOURCE SUMMARY
+-----------------------------------------------------------------------
+    SOURCE                                                        COUNT
+-----------------------------------------------------------------------
+[x] PEAR.Functions.FunctionCallSignature.SpaceBeforeCloseBracket  1
+-----------------------------------------------------------------------
+A TOTAL OF 1 SNIFF VIOLATION WERE FOUND IN 1 SOURCE
+-----------------------------------------------------------------------
+PHPCBF CAN FIX THE 1 MARKED SOURCES AUTOMATICALLY (1 VIOLATIONS IN TOTAL)
+-----------------------------------------------------------------------
+
+Script @php ./vendor/squizlabs/php_codesniffer/bin/phpcs --report=summary,source handling the lint event returned with error code 2
 ```
-Which you can see that it shows the whole action history across all branches.
 
 ### Step 4
-There is one more command for us to learn regarding changing the commit tree, which is `cherry-pick`. It's a command that allows us to pick a commit from another branch and apply it to the current branch.
-
-```bash
-git cherry-pick ac06068 --startegy-option theirs
+As you can see, PHPCS is not happy with our code. It's complaining about a missing space before the closing bracket of a function call. It suggests that we can fix it automatically by running PHPCBF.
 ```
-The syntax is pretty straightforward, we just need to specify the commit hash that we want to pick. And we can also use that lazy shortcut if we're sure that we want to adopt everything in the commit.
+composer run format .
+```
+The result should be something like this:
+```
+> @php ./vendor/squizlabs/php_codesniffer/bin/phpcbf --report=summary,source '.'
+F 1 / 1 (100%)
 
-If we don't force a strategy there, it's likely we will have merge conflicts from the cherry-pick and we need to manually fix them, just like merge or rebase.
 
-## Continue the Git journey in exercise 5
-Check out the `exercise-5` branch where we will start to talk about GitHub and its nice features that can help us to collaborate with other developers.
+
+PHPCBF RESULT SUMMARY
+----------------------------------------------------------------------
+FILE                                                  FIXED  REMAINING
+----------------------------------------------------------------------
+hello-user.php                                        1      0
+----------------------------------------------------------------------
+A TOTAL OF 1 ERROR WERE FIXED IN 1 FILE
+----------------------------------------------------------------------
+
+Time: 159ms; Memory: 8MB
+
+
+Script @php ./vendor/squizlabs/php_codesniffer/bin/phpcbf --report=summary,source handling the format event returned with error code 1
+```
+
+### Step 5
+Although the repository comes with the PHP linting tool, we still cannot ensure that everyone runs the linting command before committing their code. We need to automate this process. This is where GitHub Actions comes in.
+
+Create a new file called `coding-standards.yml` in `.github/workflows` folder. You can do it by running:
+```bash
+mkdir .github/workflows
+vim .github/workflows/coding-standards.yml
+```
+And paste the following code:
+```yaml
+name: Coding Standards
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - '*'
+        paths:
+            # Any change to a PHP or JavaScript file should run checks.
+            #      - '**.js' # We will do JS coding standards later.
+            - '**.php'
+            # These files configure NPM. Changes could affect the outcome.
+            #      - 'package*.json' # We will do JS coding standards later.
+            # These files configure Composer. Changes could affect the outcome.
+            - 'composer.*'
+            # Changes to workflow files should always verify all workflows are successful.
+            - '.github/workflows/*.yml'
+    workflow_dispatch:
+
+# Cancels all previous workflow runs for pull requests that have not completed.
+concurrency:
+    # The concurrency group contains the workflow name and the branch name for pull requests
+    # or the commit hash for any other events.
+    group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+    cancel-in-progress: true
+
+jobs:
+    # Runs PHP coding standards checks.
+    #
+    # Violations are reported inline with annotations.
+    #
+    # Performs the following steps:
+    # - Checks out the repository.
+    # - Sets up PHP.
+    # - Logs debug information.
+    # - Installs Composer dependencies (use cache if possible).
+    # - Make Composer packages available globally.
+    # - Logs PHP_CodeSniffer debug information.
+    # - Runs PHPCS on the full codebase with warnings suppressed.
+    # - Runs PHPCS on the `tests` directory without warnings suppressed.
+    # - Ensures version-controlled files are not modified or deleted.
+    phpcs:
+        name: PHP coding standards
+        runs-on: ubuntu-latest
+        if: ${{ github.event_name == 'pull_request' }}
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Set up PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.0'
+                  coverage: none
+                  tools: composer, cs2pr
+
+            - name: Log debug information
+              run: |
+                  php --version
+                  composer --version
+
+            - name: Install Composer dependencies
+              uses: ramsey/composer-install@v1
+              with:
+                  composer-options: "--no-progress --no-ansi --no-interaction"
+
+            - name: Make Composer packages available globally
+              run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
+
+            - name: Log PHPCS debug information
+              run: phpcs -i
+
+            - id: files
+              uses: jitterbit/get-changed-files@v1
+              continue-on-error: true
+
+            - name: Create the PHPCS file list
+              run: |
+                  for changed_file in ${{ steps.files.outputs.added_modified }}; do
+                    printf ${changed_file}"\n" >> $GITHUB_WORKSPACE/file-list
+                  done
+
+            - name: Run PHPCS on all changed files
+              continue-on-error: true
+              run: |
+                  phpcs --report-full --report-checkstyle=./phpcs-report.xml -n --file-list=$GITHUB_WORKSPACE/file-list
+
+            - name: Show PHPCS results in PR
+              run: cs2pr ./phpcs-report.xml
+```
+The above code will run PHPCS on all PHP files that have been changed in the pull request. It will also report the results inline with annotations. This is very useful because it will show the errors and warnings in the pull request page. You can see an example of this in the [pull request](https://github.com/yoren/hello-user/pull/1), where I intentionally broke the coding standards.
+
+## Continue the Git journey in exercise 6
+Check out the `exercise-6` branch to continue the Git journey:
 ```shell
-git checkout excercise-5
+git checkout excercise-6
 ```
