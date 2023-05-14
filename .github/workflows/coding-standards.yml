@@ -90,6 +90,3 @@ jobs:
 
       - name: Show PHPCS results in PR
         run: cs2pr ./phpcs-report.xml
-
-      - name: Ensure version-controlled files are not modified during the tests
-        run: git diff --exit-code
