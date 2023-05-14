@@ -65,7 +65,7 @@ Run `composer install` and wait for the magic to happen. You should see a `vendo
 
 Before running PHPCS, we also need to add a configuration file. Let's copy the `phpcs.xml.dist` file from WordPress's develop repository. You can find it here: https://github.com/WordPress/wordpress-develop/blob/trunk/phpcs.xml.dist
 
-You can also copy a light weight version of the configuration file from here:
+You can also copy a light weight version of the configuration file from here: https://github.com/yoren/hello-user/blob/excercise-6/phpcs.xml.dist
 
 And please also add a `.cache` folder where we will cache PHPCS results. You can do it by running `mkdir .cache`.
 
