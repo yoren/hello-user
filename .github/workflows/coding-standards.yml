@@ -68,7 +68,7 @@ jobs:
           composer-options: "--no-progress --no-ansi --no-interaction"
 
       - name: Make Composer packages available globally
-        run: echo "${PWD}/includes/vendor/bin" >> $GITHUB_PATH
+        run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
 
       - name: Log PHPCS debug information
         run: phpcs -i
