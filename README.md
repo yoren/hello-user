@@ -249,10 +249,10 @@ jobs:
             - name: Show PHPCS results in PR
               run: cs2pr ./phpcs-report.xml
 ```
-The above code will run PHPCS on all PHP files that have been changed in the pull request. It will also report the results inline with annotations. This is very useful because it will show the errors and warnings in the pull request page. You can see an example of this in the [pull request](https://github.com/yoren/hello-user/pull/1), where I intentionally broke the coding standards.
+The above code will run PHPCS on all PHP files that have been changed in the pull request. It will also report the results inline with annotations. This is very useful because it will show the errors and warnings in the pull request page. You can see an example of this in the [pull request](https://github.com/yoren/hello-user/pull/3), where I intentionally broke the coding standards.
 
 ## Continue the Git journey in exercise 6
 Check out the `exercise-6` branch to continue the Git journey:
 ```shell
-git checkout excercise-6
+git checkout exercise-6
 ```
