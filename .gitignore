@@ -29,6 +29,5 @@ node_modules/
 .env
 
 .idea
-.cache
 vendor
 composer.lock
