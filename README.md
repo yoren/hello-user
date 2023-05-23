@@ -69,6 +69,11 @@ You can also copy a light weight version of the configuration file from here: ht
 
 And please also add a `.cache` folder where we will cache PHPCS results. You can do it by running `mkdir .cache`.
 
+For this `.cache` folder, we would like to allow it to be committed to the repository, but we don't want to allow its content, like `phpcs.json` to be committed. We can do it by adding a `.gitignore` file in the `.cache` folder with the following content:
+```gitignore
+*
+```
+
 ### Step 3
 Let's try running PHPCS on our plugin. Run `composer run lint .` and you should see something like this:
 ```
