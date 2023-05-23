@@ -1,7 +1,67 @@
 # hello-user
 A Demo repo for the Git Workshop at Codeable
 
-## Exercise 6
+## Exercise 6-1
+In our previous exercise, we added PHPCS to our plugin and also add a GitHub workflow to run it on PRs. There is also another timing that we can run PHPCS on: when we commit our code. This is a good way to make sure that we don't commit code that doesn't follow the coding standards.
+
+### Step 1
+Let's use a Composer package `composer-git-hooks` to speed things up. First, add a new `extra` section in your `composer.json`:
+
+```json
+{
+	"extra": {
+		"hooks": {
+			"config": {
+				"stop-on-failure": [
+					"pre-push"
+				]
+			},
+			"pre-commit": [
+				"echo committing as $(git config user.name)",
+				"composer format $(git diff --name-only --staged)"
+			],
+			"pre-push": [
+				"composer lint:errors $(git diff --name-only --staged)"
+			],
+			"post-merge": "composer update"
+		}
+	}
+}
+```
+
+Also, add two new scripts to install or update the above git hooks on `composer install` or `composer update`:
+
+```json
+{
+	"scripts": {
+		"post-install-cmd": "cghooks add --ignore-lock",
+		"post-update-cmd": "cghooks update"
+	}
+}
+```
+
+### Step 2
+Once the config is ready, install the package and run `composer update`:
+```bash
+composer require --dev brainmaestro/composer-git-hooks
+composer update
+```
+
+This will get the git hooks installed for us. Let's check if they're installed:
+
+```bash
+cd .git/hooks
+ls
+```
+
+You should see three working hooks: `pre-commit`, `pre-push`, and `post-merge`. Those ends with `.sample` are not working hooks.
+
+### Step 3
+As what we've done in the previous exercise, we can mess up some php code and try committing it, and verify if the git hook works.
+
+Now you may be wondering, if we can just block these CS violations when committing the code, do we still need the workflow to run PHPCS on PRs? The thing is, git hooks can actually be skipped by adding a `--no-verify` flag when committing. So, it's still a good idea to have the workflow to run PHPCS on PRs.
+
+## Exercise 6-2
 Our Git journey for today will end with this last exercise: release hello user with a release GitHub workflow.
 
 ### Step 1
@@ -57,7 +117,7 @@ jobs:
             - name: Create artifact
               uses: montudor/action-zip@v1
               with:
-                  args: zip -X -r artifact/hello-user-${{ github.event.release.tag_name }}.zip hello-user -x *.git* node_modules/\* .* "*/\.*" CODE_OF_CONDUCT.md CONTRIBUTING.md ISSUE_TEMPLATE.md PULL_REQUEST_TEMPLATE.md *.dist *composer.* *tests** *vendor* *src* *package*
+                  args: zip -X -r artifact/hello-user-${{ github.event.release.tag_name }}.zip hello-user -x *.git* node_modules/\* .* "*/\.*" CODE_OF_CONDUCT.md CONTRIBUTING.md ISSUE_TEMPLATE.md PULL_REQUEST_TEMPLATE.md *.dist *composer.* *tests** *vendor* *src* *package* *.cache*
             - name: Upload artifact
               uses: actions/upload-artifact@v3
               with:
