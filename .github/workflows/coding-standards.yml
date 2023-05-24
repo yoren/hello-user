@@ -1,0 +1,93 @@
+name: Coding Standards
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+    paths:
+      # Any change to a PHP or JavaScript file should run checks.
+      #      - '**.js' # We will do JS coding standards later.
+      - '**.php'
+      # These files configure NPM. Changes could affect the outcome.
+      #      - 'package*.json' # We will do JS coding standards later.
+      # These files configure Composer. Changes could affect the outcome.
+      - 'composer.*'
+      # Changes to workflow files should always verify all workflows are successful.
+      - '.github/workflows/*.yml'
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for pull requests that have not completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name for pull requests
+  # or the commit hash for any other events.
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  # Runs PHP coding standards checks.
+  #
+  # Violations are reported inline with annotations.
+  #
+  # Performs the following steps:
+  # - Checks out the repository.
+  # - Sets up PHP.
+  # - Logs debug information.
+  # - Installs Composer dependencies (use cache if possible).
+  # - Make Composer packages available globally.
+  # - Logs PHP_CodeSniffer debug information.
+  # - Runs PHPCS on the full codebase with warnings suppressed.
+  # - Runs PHPCS on the `tests` directory without warnings suppressed.
+  # - Ensures version-controlled files are not modified or deleted.
+  phpcs:
+    name: PHP coding standards
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          coverage: none
+          tools: composer, cs2pr
+
+      - name: Log debug information
+        run: |
+          php --version
+          composer --version
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+        with:
+          composer-options: "--no-progress --no-ansi --no-interaction"
+          ignore-cache: "yes"
+
+      - name: Make Composer packages available globally
+        run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
+
+      - name: Log PHPCS debug information
+        run: phpcs -i
+
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        continue-on-error: true
+
+      - name: Create the PHPCS file list
+        run: |
+          for changed_file in ${{ steps.files.outputs.added_modified }}; do
+            printf ${changed_file}"\n" >> $GITHUB_WORKSPACE/file-list
+          done
+
+      - name: Run PHPCS on all changed files
+        continue-on-error: true
+        run: |
+          phpcs --report-full --report-checkstyle=./phpcs-report.xml -n --file-list=$GITHUB_WORKSPACE/file-list
+
+      - name: Show PHPCS results in PR
+        run: cs2pr ./phpcs-report.xml
