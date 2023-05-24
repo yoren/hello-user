@@ -26,10 +26,54 @@ or if you prefer https:
 git clone https://github.com/xxx/hello-user.git
 ```
 
-### Step 2
-Once you have the repo on your local machine, you can run the following command to create the block plugin skeleton.
+### Step 1
+If you clone the repo from your own GitHub account, you are not able to see the `exercise-1` branch as I asked you to only forked the `main` branch.
 
-Before running the following commands, make sure you're in the directory that contains the `hello-user` repo. So when we run the `create-block` command, we will be able to let it add files into this repo.
+To get all the branches from my original repo, let's just add the `upstream` remote.
+```shell
+git remote add upstream git@github.com:yoren/hello-user.git
+```
+and run `git remote -v` to verify the remote is added correctly.
+```
+origin	git@github.com:1fixdotio/hello-user.git (fetch)
+origin	git@github.com:1fixdotio/hello-user.git (push)
+upstream	git@github.com:yoren/hello-user.git (fetch)
+upstream	git@github.com:yoren/hello-user.git (push)
+```
+
+### Step 2
+Later on, you can pull the latest changes from the upstream repo by running the following command:
+```shell
+git pull upstream main
+```
+Or check if there is any new changes by running the following command:
+```shell
+git fetch upstream
+```
+To see which remote and branch you're currently tracking, run the following command:
+```shell
+git branch -vv
+```
+You can simply push to `origin/main` by running the following command:
+```shell
+git push
+```
+And to push to other branches, you can run the following command:
+```shell
+git push origin <branch-name>
+```
+
+Becuase we want to keep our work in the `excercise-1` branch, let's run the following commands:
+
+```shell
+git fetch upstream
+git checkout exercise-1
+```
+
+### Step 3
+Once you have the repo on the right branch on your local machine, you can run the following command to create the block plugin skeleton.
+
+Before running the following commands, **make sure you're in the directory that contains the `hello-user` repo**. So when we run the `create-block` command, we will be able to let it add files into this repo.
 ```shell
 nvm use 16.20
 npx @wordpress/create-block hello-user
@@ -63,7 +107,7 @@ Untracked files:
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
-### Step 3
+### Step 4
 If you're interested in what changes are made to the `.gitignore` file, you can run the following command:
 ```shell
 git diff .gitignore
@@ -108,7 +152,7 @@ Changes to be committed:
 	new file:   src/style.scss
 ```
 
-### Step 4
+### Step 5
 Now we can commit the changes to the local repo.
 ```shell
 git commit -m "Add block plugin skeleton"
@@ -141,40 +185,9 @@ You should see the following output:
  create mode 100644 src/style.scss
 ```
 
-### Step 5
-Add an `upstream` remote.
-```shell
-git remote add upstream git@github.com:yoren/hello-user.git
-```
-and run `git remote -v` to verify the remote is added correctly.
-```
-origin	git@github.com:1fixdotio/hello-user.git (fetch)
-origin	git@github.com:1fixdotio/hello-user.git (push)
-upstream	git@github.com:yoren/hello-user.git (fetch)
-upstream	git@github.com:yoren/hello-user.git (push)
-```
+I know you may have the urge to push the latest change to GitHub, but if you're on the `exercise-1` branch, you won't be able to do that with `git push`.
 
-### Step 6
-Later on, you can pull the latest changes from the upstream repo by running the following command:
-```shell
-git pull upstream main
-```
-Or check if there is any new changes by running the following command:
-```shell
-git fetch upstream
-```
-To see which remote and branch you're currently tracking, run the following command:
-```shell
-git branch -vv
-```
-You can simply push to `origin/main` by running the following command:
-```shell
-git push
-```
-And to push to other branches, you can run the following command:
-```shell
-git push origin <branch-name>
-```
+Let's see why is that happening and how to resolve it in the next exercies.
 
 ## Continue the Git journey in exercise 2
 Check out the `exercise-2` branch to continue the Git journey:
