@@ -38,8 +38,8 @@
 		"format": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf --report=summary,source",
 		"lint": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --report=summary,source",
 		"lint:errors": "@lint -n",
-		"post-install-cmd": "cghooks add --ignore-lock",
-		"post-update-cmd": "cghooks update"
+		"post-install-cmd": "./vendor/bin/cghooks add --ignore-lock",
+		"post-update-cmd": "./vendor/bin/cghooks update"
 	},
 	"extra": {
 		"hooks": {
