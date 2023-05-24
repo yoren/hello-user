@@ -37,6 +37,9 @@ jobs:
           composer-options: "--no-progress --no-ansi --no-interaction --no-dev"
           ignore-cache: "yes"
 
+      - name: Make Composer packages available globally
+        run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
+
       - name: Build project
         run: |
           npm install
