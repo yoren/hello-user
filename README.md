@@ -28,6 +28,8 @@ git clone https://github.com/xxx/hello-user.git
 
 ### Step 2
 Once you have the repo on your local machine, you can run the following command to create the block plugin skeleton.
+
+Before running the following commands, make sure you're in the directory that contains the `hello-user` repo. So when we run the `create-block` command, we will be able to let it add files into this repo.
 ```shell
 nvm use 16.20
 npx @wordpress/create-block hello-user
