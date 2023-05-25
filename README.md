@@ -1,6 +1,13 @@
 # hello-user
 A Demo repo for the Git Workshop at Codeable
 
+## Recap of the workshop
+- If you're my Codeable fellow, you can find the recording of the workshop [here](https://learn.codeable.io/skills-chat/fundamentals-of-git-and-how-to-improve-their-software-development/).
+- Try speeding up the video to 1.25x or 1.5x if you find it too slow.
+- I was not able to finish the full demonstration of all 6 exercises in the workshop, which was really a shame especially I had to rush through the last two exercises, which I considered the highlights of the workshop.
+- The repo was designed to be a self-paced workshop. You can follow the instructions in the README.md file of each exercise branch to complete the exercise. The resolution of the exercise is in its next exercise branch. I hope y'all can still find it useful.
+- You're very welcome to submit a PR to this repo if you find any typo or error in the README.md file or if you have any suggestions to improve the workshop. Especially there are [3 issues](https://github.com/yoren/hello-user/issues) awaiting you to pick up! 
+
 ## Pre-requisites
 - Git is required to be installed before this workshop. You can download it from https://git-scm.com/downloads and install it on your machine. If you're using a Mac like me, Git should be already installed on your machine.
 - Other tools that are recommended to be installed for a smoother experience during the workshop:
